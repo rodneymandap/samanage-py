@@ -1,0 +1,7 @@
+__title__ = 'samanage'
+__description__ = 'A package to easily connect to Samanage API' 
+__url__ = 'https://github.com/rodneymandap/iwg-samanage'
+__version__ = '0.0.1'
+__author__ = 'Rodney Jan Mandap'
+__author_email__ = 'rodneyjan.mandap@iwgplc.com'
+__copyright__ = 'Copyright 2020 Rodney Mandap'
