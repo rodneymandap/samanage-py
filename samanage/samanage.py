@@ -66,7 +66,7 @@ class Samanage():
                 return response
 
     def create(self, url, data):
-        response = requests.post(url, data=data)
+        response = requests.post(url, json=data, headers=self.headers)
         return response
 
     def update(self, url):
