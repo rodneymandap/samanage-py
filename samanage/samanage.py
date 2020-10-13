@@ -4,6 +4,12 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
 class Samanage():
+    RESOURCE_URLS = {
+        'change': 'changes.json',
+        'incident': 'incidents.json',
+        'site': 'sites.json'
+    }
+
     def __init__(self, token=None):
         self.base_url = "https://api.samanage.com"
 
@@ -17,6 +23,7 @@ class Samanage():
             'Content-Type' : 'application/json',
             'X-Samanage-Authorization' : 'Bearer {}'.format(self.token), 
         }
+        self.options = self.RESOURCE_URLS
 
     def __retry_session(self, retries=5,
                       backoff_factor=0.3,
@@ -58,9 +65,9 @@ class Samanage():
             except Exception:
                 return response
 
-    def create(self, url):
-        pass
+    def create(self, url, data):
+        response = requests.post(url, data=data)
+        return response
 
     def update(self, url):
         pass
-
