@@ -22,6 +22,7 @@ class Samanage():
             'Accept' : 'application/vnd.samanage.v2.1+json',
             'Content-Type' : 'application/json',
             'X-Samanage-Authorization' : 'Bearer {}'.format(self.token), 
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Winx64; x64; rv:68.0) Gecko/20100101 Firefox/68.0',
         }
         self.options = self.RESOURCE_URLS
 
@@ -40,14 +41,11 @@ class Samanage():
         session.mount('https://', adapter)
         return session
 
-    def __next_page(self):
-        pass
-
     def get(self, url):
         """
             Return a single object
         """
-        response = self.__retry_session().get(self.base_url + url, headers=self.headers)
+        response = self.__retry_session().get(url, headers=self.headers)
         return response
 
     def get_all(self, url):
@@ -64,10 +62,20 @@ class Samanage():
                 return paginated
             except Exception:
                 return response
-
-    def create(self, url, data):
-        response = requests.post(url, json=data, headers=self.headers)
         return response
 
-    def update(self, url):
+    def search(self):
         pass
+
+    def create(self, url, data):
+        response = self.__retry_session().post(url, json=data, headers=self.headers)
+        return response
+
+    def update(self, url, payload):
+        with requests.Session() as s:
+            response = s.put(url, json=payload, headers=self.headers)
+        return response
+
+    def delete(self, url):
+        path = self.base_url + url
+        response = requests.delete(path, headers=self.headers)

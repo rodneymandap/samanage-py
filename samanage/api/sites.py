@@ -10,16 +10,24 @@ class Site(Samanage):
             raise ValueError("Payload must be a dict.")
 
         path = f'{self.base_url}/{self.resource_url}'
-        return super().create(path, payload)
+        return self.create(path, payload)
 
-    def get_site(self):
-        pass
+    def get_site(self, id, layout=None):
+        path = f'{self.base_url}/sites/{id}.json'
+        if layout:
+            path = path + '?layout=long'
+        return self.get(path)
 
-    def get_sites(self):
-        pass
+    def get_all_sites(self, layout=None):
+        path = f"{self.base_url}/{self.resource_url}"
+        if layout:
+            path = path + '?layout=long'
+        return super().get_all(path)
 
-    def update_site(self):
-        pass
+    def update_site(self, payload):
+        path = f"/{self.resource_url}"
+        return self.update(path, payload)
 
-    def delete_site(self):
-        pass
+    def delete_site(self, id):
+        path = f'/sites/{id}.json'
+        return self.delete(path)
