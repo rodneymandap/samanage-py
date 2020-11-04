@@ -23,7 +23,7 @@ class Connection:
 
     _allowed_methods = ['get', 'post', 'update', 'delete']
 
-    def __init__(self, token, *args, retries=3, requests_delay=200, timeout=None, raise_http_errors=True):
+    def __init__(self, token, *args, retries=3, requests_delay=200, timeout=None, raise_http_errors=True, **kwargs):
 
         if isinstance(token, int):
             raise ValueError('Provide valid token credential')
@@ -35,7 +35,8 @@ class Connection:
         self.timeout = timeout
         self.token = token
         self.retries = retries
-
+        self.headers = kwargs.get('headers', None)
+            
     def get_session(self):
         session = requests.Session()
 
@@ -68,6 +69,9 @@ class Connection:
 
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout
+
+        if self.headers is not None:
+            kwargs['headers'] = self.headers
 
         request_done = False
 
