@@ -4,6 +4,7 @@ from .connection import Connection
 logger = logging.getLogger(__name__)
 
 SAMANAGE_API_VERSION = 'v2.1'
+SAMANAGE_BASE_URL = 'https://api.samanage.com'
 
 class Samanage:
 
@@ -24,7 +25,7 @@ class Samanage:
             raise ValueError("Token must be provided.") 
 
         if base_url is None:
-            self.base_url = 'https://api.samanage.com'
+            self.base_url = SAMANAGE_BASE_URL 
         else:
             self.base_url = base_url
 
