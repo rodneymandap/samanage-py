@@ -9,9 +9,16 @@ class IncidentRecord:
         TODO:  
     """
     def __init__(self, parent=None, **kwargs):
-        self.con = parent
-        pass
-    pass
+        self.number = kwargs.get('number', None)
+
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return f"Incident: {self.number}" 
 
     
 class Incident:
@@ -20,6 +27,14 @@ class Incident:
         'get_incident': '/incidents/{id}.json',
         'search': '/search.json?q={keyword}',
     }
+
+    _required_fields = (
+        'name',
+        'requester',
+        'priority',
+    )
+
+    incident_constructor = IncidentRecord
 
     def __init__(self, parent=None, *args, **kwargs):
 
@@ -40,7 +55,7 @@ class Incident:
         if not response:
             return None
         data = response.json()
-        return data
+        return self.incident_constructor(**data) 
 
     def get_all(self, url=None, layout=None):
         """
@@ -55,31 +70,33 @@ class Incident:
 
         response = self.con.get(path)
         collections.append(response.json())
-
         while 'next' in response.links:
             response = self.con.get(response.links['next']['url']) 
             collections.append(response.json())
-
-        return collections
-        
-        if url is None:
-            path = f"{self.base_url}/incidents.json"
-        else:
-            path = f"{self.base_url}/{url}"
-
-        if layout:
-            path = path + '?layout=long'
-        return self.con.get_all(path)
+        if not response:
+            return None
+        return [self.incident_constructor(**incident) for incident in collections[0]]
 
     def search(self, keyword, **params):
         path = self.base_url + self._endpoints.get('search').format(keyword=keyword)
         self.con.get(path)
 
+    def create(self, data):
+        path = self.base_url + self._endpoints.get('incidents')
+
+        if isinstance(data, dict):
+            if 'incident' in data:
+                if self._required_fields not in data.get('incident'):
+                    raise ValueError('Fields: ' + ', '.join(self._required_fields) + ' is required.')
+        else:
+            raise TypeError('Payload must be a dict.')
+        return self.con.create(path, data=data)
+
     def update(self, id, payload):
+        path = self.base_url + self._endpoints.get('get_incident').format(id=id)
+
         if not isinstance(payload, dict):
             raise ValueError('Payload must be a dict.')
-
-        path = self.base_url + self._endpoints.get('get_incident').format(id=id)
         return self.con.update(path, payload)
 
     def delete(self, id):
