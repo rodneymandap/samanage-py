@@ -18,7 +18,7 @@ class IncidentRecord:
         return self.__repr__()
 
     def __repr__(self):
-        return f"Incident: {self.number}" 
+        return f"<Incident: {self.number}>" 
 
     
 class Incident:
@@ -43,21 +43,21 @@ class Incident:
         self.con = parent.con
         self.base_url = parent.base_url
 
-    def get(self, id, layout=None):
+    def get(self, id, params=None, layout=None):
         """
             Return a single incident
         """
         path = 'https://api.samanage.com' + self._endpoints.get('get_incident').format(id=id)
         if layout:
             path = path + '?layout=long'
-        response = self.con.get(path)
+        response = self.con.get(path, params=params if params else None)
 
         if not response:
             return None
         data = response.json()
         return self.incident_constructor(**data) 
 
-    def get_all(self, url=None, layout=None):
+    def get_all(self, url=None, params=None, layout=None):
         """
             Return all incidents based on the url provided.
         """
@@ -68,10 +68,10 @@ class Incident:
         else:
             path = url
 
-        response = self.con.get(path)
+        response = self.con.get(path, params=params)
         collections.append(response.json())
         while 'next' in response.links:
-            response = self.con.get(response.links['next']['url']) 
+            response = self.con.get(response.links['next']['url'], params=params) 
             collections.append(response.json())
         if not response:
             return None
@@ -97,8 +97,11 @@ class Incident:
 
         if not isinstance(payload, dict):
             raise ValueError('Payload must be a dict.')
-        return self.con.update(path, payload)
+        return self.con.put(path, json=payload)
 
     def delete(self, id):
         path = self.base_url + self._endpoints.get('get_incident').format(id=id)
         return self.con.delete(path)
+
+    def filter(self):
+        pass
