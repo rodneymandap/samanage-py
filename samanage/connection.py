@@ -21,7 +21,7 @@ RETRIES_BACKOFF_FACTOR = 0.5
 class Connection:
     """ Handles all connection between the app and the server """
 
-    _allowed_methods = ['get', 'post', 'update', 'delete']
+    _allowed_methods = ['get', 'post', 'put', 'delete']
 
     def __init__(self, token, *args, retries=3, requests_delay=200, timeout=None, raise_http_errors=True, **kwargs):
 
@@ -79,7 +79,7 @@ class Connection:
             self._check_delay()
             try:
                 logger.info(f"Requesting ({method.upper()} URL: {url}")
-                logger.info(f"Requesting parameters: {kwargs}")
+                # logger.info(f"Requesting parameters: {kwargs}")
                 response = request_obj.request(method, url, **kwargs)
                 response.raise_for_status()
                 logger.info(
@@ -92,7 +92,7 @@ class Connection:
             except HTTPError as e:
                 try:
                     error = response.json()
-                    error_message = error.get('error', {}).get('message', '')
+                    error_message = error.get('error', {})
                 except ValueError:
                     error_message = ''
 
@@ -127,7 +127,7 @@ class Connection:
         return self.request(url, 'post', data=data, **kwargs)
 
     def put(self, url, data=None, **kwargs):
-        return self.request(url, 'post', data=data, **kwargs)
+        return self.request(url, 'put', data=data, **kwargs)
 
     def delete(self, url, **kwargs):
         return self.request(url, 'delete', **kwargs)
