@@ -34,7 +34,12 @@ class Samanage:
         return Incident(parent=self)
 
     def comment(self, **kwargs):
-        pass
+        from .comments import Comment 
+        return Comment(parent=self)
 
     def change(self, **kwargs):
         pass
+
+    def user(self, **kwargs):
+        from .users import User
+        return User(parent=self)
