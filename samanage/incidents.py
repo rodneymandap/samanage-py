@@ -61,7 +61,7 @@ class Incident:
         """
             Return all incidents based on the url provided.
         """
-        collections = []
+        collections=None
 
         if url is None:
             path = 'https://api.samanage.com' + self._endpoints.get('incidents')
@@ -69,13 +69,13 @@ class Incident:
             path = url
 
         response = self.con.get(path, params=params)
-        collections.append(response.json())
+        collections=response.json()
         while 'next' in response.links:
             response = self.con.get(response.links['next']['url'], params=params) 
-            collections.append(response.json())
+            collections.extend(response.json())
         if not response:
             return None
-        return [self.incident_constructor(**incident) for incident in collections[0]]
+        return [self.incident_constructor(**incident) for incident in collections]
 
     def search(self, keyword, **params):
         path = self.base_url + self._endpoints.get('search').format(keyword=keyword)
