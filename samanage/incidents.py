@@ -45,7 +45,7 @@ class Incident:
 
     def get(self, id, params=None, layout=None):
         """
-            Return a single incident
+            Return a single incident or page
         """
         path = 'https://api.samanage.com' + self._endpoints.get('get_incident').format(id=id)
         if layout:
@@ -68,10 +68,10 @@ class Incident:
         else:
             path = url
 
-        response = self.con.get(path, params=params)
+        response = self.con.get(path, params=params if params else None)
         collections=response.json()
         while 'next' in response.links:
-            response = self.con.get(response.links['next']['url'], params=params) 
+            response = self.con.get(response.links['next']['url'], params=params if params else None) 
             collections.extend(response.json())
         if not response:
             return None
