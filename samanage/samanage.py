@@ -43,3 +43,7 @@ class Samanage:
     def user(self, **kwargs):
         from .users import User
         return User(parent=self)
+
+    def site(self, **kwargs):
+        from .sites import Site
+        return Site(parent=self) 
