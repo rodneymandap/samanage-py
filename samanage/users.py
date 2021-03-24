@@ -42,10 +42,19 @@ class User:
         return self.user_constructor(**data)
 
     def get_all(self, params=None):
+        collections = None
+
         path = self.base_url + self._endpoints.get('users')
         response = self.con.get(path, params=params)
-        data = response.json()
-        return data
+        collections = response.json()
+
+        while 'next' in response.links:
+            response = self.con.get(response.links['next']['url'], params=params if params else None) 
+            collections.extend(response.json())
+
+        if not response:
+            return None
+        return collections
 
     def update(self, id, payload):
         path = self.base_url + self._endpoints.get('user').format(id=id)
