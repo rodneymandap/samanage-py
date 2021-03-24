@@ -8,9 +8,10 @@ class Site:
         'sites': '/sites.json',
     }
 
-    _required_fields = (
-        'site'
-    )
+    # _required_fields = (
+    #     'site',
+    #     'name',
+    # )
 
     def __init__(self, parent=None, *args, **kwargs):
         self.con = parent.con
@@ -41,13 +42,15 @@ class Site:
 
     def create(self, data):
         path = self.base_url + self._endpoints.get('sites')
+
         if isinstance(data, dict):
-            if 'site' in data:
-                if self._required_fields not in data.get('site'):
-                    raise ValueError('Fields: ' + ', '.join(self._required_fields) + ' is required.')
+            return self.con.post(path, json=data)
+            # if 'site' in data:
+            #     if self._required_fields not in data.get('site'):
+            #         raise ValueError('Fields: ' + ', '.join(self._required_fields) + ' is required.')
         else:
             raise TypeError('Payload must be a dict.')
-        return self.con.create(path, data=data)
+        return None
 
     def update(self, id, payload):
         path = self.base_url + self._endpoints.get('site').format(id=id)
