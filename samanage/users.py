@@ -40,3 +40,21 @@ class User:
             return None
         data = response.json()
         return self.user_constructor(**data)
+
+    def get_all(self, params=None):
+        path = self.base_url + self._endpoints.get('users')
+        response = self.con.get(path, params=params)
+        data = response.json()
+        return data
+
+    def update(self, id, payload):
+        path = self.base_url + self._endpoints.get('user').format(id=id)
+
+        if not isinstance(payload, dict):
+            raise ValueError('Payload must be a dict.')
+        return self.con.put(path, json=payload)
+
+    def delete(self, id):
+        path = self.base_url + self._endpoints.get('user').format(id=id)
+        return self.con.delete(path)
+
